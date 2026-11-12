@@ -5,6 +5,9 @@
 #pragma once
 
 #include <optional>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include <tt-metalium/experimental/command_list.hpp>
 
@@ -17,6 +20,29 @@
 namespace ttnn::command_list {
 
 class CommandList;
+
+namespace detail {
+
+// The command-list parameters matched in one recorded workload (command_list.cpp).
+struct RecordedParameters;
+
+// One encoding of a scalar TTNN param, written to the kernel arguments recorded under its Metal name.
+struct CmdListMetalScalar {
+    std::string metal_cmd_list_param_name;  // "<TTNN param>/<factory type>/<Metal param>"
+    CmdListEncodeFn encode;                 // from the first record of the Metal name
+    bool has_runtime = false;
+    bool has_common_runtime = false;
+};
+
+// What update_args writes for one TTNN param: its tensor, or each of its encodings.
+struct CmdListParamLayout {
+    bool is_tensor = false;
+    std::vector<CmdListMetalScalar> metal_scalars;
+};
+
+using CmdListLayout = std::unordered_map<std::string, CmdListParamLayout>;
+
+}  // namespace detail
 
 // Records TTNN device operations into a command list instead of launching them.
 // Only Metal 2.0 (ProgramSpec) programs can be recorded. Nothing needs to run before recording: recording compiles
@@ -58,9 +84,16 @@ public:
     // the device.
     void record(QueueId binary_upload_cq_id, tt::tt_metal::distributed::MeshWorkload& workload);
 
+    // The same, also recording `parameters`. Commits nothing if the workload cannot be recorded.
+    void record(
+        QueueId binary_upload_cq_id,
+        tt::tt_metal::distributed::MeshWorkload& workload,
+        const detail::RecordedParameters& parameters);
+
 private:
     tt::tt_metal::experimental::CommandListBuilder metal_builder_;
     bool recording_ = false;
+    detail::CmdListLayout layout_;
 };
 
 // A replayable command list in device DRAM, bound to the command queue it was built for.
@@ -82,9 +115,10 @@ public:
 
 private:
     friend class CommandListBuilder;
-    explicit CommandList(tt::tt_metal::experimental::CommandList metal_list);
+    CommandList(tt::tt_metal::experimental::CommandList metal_list, detail::CmdListLayout layout);
 
     tt::tt_metal::experimental::CommandList metal_list_;
+    detail::CmdListLayout layout_;
 };
 
 }  // namespace ttnn::command_list
