@@ -39,6 +39,9 @@ class Sfpu:
     granularity = InvocationGranularity.NONE
     input_count = 1
 
+    def supports_dest_format(self, dest_format) -> bool:
+        return True
+
     @staticmethod
     def _vector_mode(operation: "L1Operation") -> str:
         num_faces = operation.tile_shape.total_num_faces()

@@ -73,10 +73,11 @@ class UnpackKernelGenerator:
                 ):
                     all_headers.update(fused_compute.unpacker.get_headers())
 
-        unpack_calls = "".join(
-            op.unpack(self.config.global_config, blocks)
-            for op, blocks in zip(self.config.pipeline, plans)
-        )
+        unpack_calls = ""
+        previous = None
+        for op, blocks in zip(self.config.pipeline, plans):
+            unpack_calls += op.unpack(self.config.global_config, blocks, previous)
+            previous = op.first_unpack or previous
         return render_kernel("UNPACK", all_headers, unpack_calls)
 
 
@@ -94,10 +95,11 @@ class MathKernelGenerator:
         if self.config.global_config.skip_math_init:
             all_headers.discard("sfpu_operations_quasar.h")
 
-        math_calls = "".join(
-            op.do_math(self.config.global_config, blocks)
-            for op, blocks in zip(self.config.pipeline, plans)
-        )
+        math_calls = ""
+        previous = None
+        for op, blocks in zip(self.config.pipeline, plans):
+            math_calls += op.do_math(self.config.global_config, blocks, previous)
+            previous = op.first_math
         return render_kernel("MATH", all_headers, math_calls)
 
 
@@ -135,10 +137,11 @@ class PackKernelGenerator:
         if self.config.global_config.skip_math_init:
             all_headers.discard("sfpu_operations_quasar.h")
 
-        pack_calls = "".join(
-            op.pack(self.config.global_config, blocks)
-            for op, blocks in zip(self.config.pipeline, plans)
-        )
+        pack_calls = ""
+        previous = None
+        for op, blocks in zip(self.config.pipeline, plans):
+            pack_calls += op.pack(self.config.global_config, blocks, previous)
+            previous = op._get_pack_nodes()[0]
         return render_kernel("PACK", all_headers, pack_calls)
 
 

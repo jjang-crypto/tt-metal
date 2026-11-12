@@ -37,7 +37,7 @@ def configure_pack(
 ) -> str:
     return (
         f"_llk_pack_reconfig_data_format_<{dest_acc}>(\n"
-        f"    {pack_src.cpp_underlying_value}, {pack_dst.cpp_underlying_value}, {output.tile_size}\n"
+        f"    {pack_src.cpp_underlying_value}, {pack_dst.cpp_underlying_value}, {output.tile_size}, {output.tile_shape.face_r_dim}, {output.tile_shape.total_num_faces()}\n"
         f");\n"
     )
 
@@ -45,7 +45,7 @@ def configure_pack(
 def relu_config(
     config: "GlobalConfig", operation: "L1Operation", node: "PackNode"
 ) -> str:
-    pack_src_format = config.sentinel._pack_src
+    pack_src_format = node.pack_src_format
 
     relu_config_val = PackGolden.generate_relu_config(
         node.pack_relu, node.relu_threshold, pack_src_format

@@ -39,11 +39,30 @@ class PackNode:
         index_spec=None,
     ):
         self.packer = packer
+        self.pack_src_format = self.pack_dst_format = None
         self.output = output
         self.index_spec = index_spec
         self.pack_relu = pack_relu
         self.relu_threshold = relu_threshold
         self.pack_l1_accumulation = pack_l1_accumulation
+
+    def configure_pack(self, config, operation, previous=None):
+        if previous is None:
+            return pack_common.hw_configure_pack(
+                self.output,
+                config.dest_acc.cpp_enum_value,
+                self.pack_src_format,
+                self.pack_dst_format,
+                pack_mode=operation.bh_tilize.pack_mode_value,
+            )
+        if previous is self:
+            return ""
+        return pack_common.configure_pack(
+            self.output,
+            config.dest_acc.cpp_enum_value,
+            self.pack_src_format,
+            self.pack_dst_format,
+        )
 
     def init(
         self,

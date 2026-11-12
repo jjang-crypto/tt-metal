@@ -31,14 +31,14 @@ def configure_pack(
     pack_src: DataFormat,
     pack_dst: DataFormat,
 ) -> str:
-    return f"_llk_pack_hw_configure_<p_pacr::PACK0, {dest_acc}>(static_cast<DataFormat>({pack_src.cpp_underlying_value}), ReluConfig::from_packed(0));\n"
+    return f"_llk_pack_reconfig_data_format_<p_pacr::PACK0>({pack_src.cpp_underlying_value}, {pack_dst.cpp_underlying_value});\n"
 
 
 def relu_config(
     config: "GlobalConfig", operation: "L1Operation", node: "PackNode"
 ) -> str:
     dest_acc = config.dest_acc.cpp_enum_value
-    pack_src_format = config.sentinel._pack_src
+    pack_src_format = node.pack_src_format
 
     relu_config_val = PackGolden.generate_relu_config(
         node.pack_relu, node.relu_threshold, pack_src_format

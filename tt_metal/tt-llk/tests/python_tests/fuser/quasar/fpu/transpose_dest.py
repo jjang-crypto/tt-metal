@@ -31,7 +31,7 @@ class TransposeDestFpu(Fpu):
         block: BlockData,
     ) -> str:
         en_32bit_dest = config.dest_acc.cpp_enum_value
-        math_format = config.sentinel._math_format.cpp_enum_value
+        math_format = compute_unit.math_format.cpp_enum_value
         transpose_faces = compute_unit.transpose_faces.cpp_enum_value
         return (
             f"_configure_mov_ops_explicit_alu_data_format_state_<{en_32bit_dest}>({math_format}, {math_format});"
@@ -55,5 +55,5 @@ class TransposeDestFpu(Fpu):
         block: BlockData,
     ) -> str:
         en_32bit_dest = config.dest_acc.cpp_enum_value
-        math_format = config.sentinel._math_format.cpp_enum_value
+        math_format = compute_unit.math_format.cpp_enum_value
         return f"_configure_default_alu_data_format_state_<{en_32bit_dest}>({math_format}, {math_format});\n"

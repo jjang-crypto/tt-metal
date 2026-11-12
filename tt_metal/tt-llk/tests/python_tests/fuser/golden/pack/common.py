@@ -14,7 +14,7 @@ def prepare_tile(src, state, pack_node, operation, config):
     if reduce_dim in (ReduceDimension.Column, ReduceDimension.Scalar):
         tile[1:, :] = 0
     if pack_node.pack_relu != PackerReluType.NoRelu:
-        data_format = config.sentinel.golden_pack_src
+        data_format = pack_node.pack_src_format
         key = (id(pack_node), data_format)
         if key not in state.relu_configs:
             state.relu_configs[key] = PackGolden.generate_relu_config(

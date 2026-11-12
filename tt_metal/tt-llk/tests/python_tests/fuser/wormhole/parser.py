@@ -20,7 +20,6 @@ from fuser.validator import (
     ELTWISE_DIMS,
     IN0_REQUIRED,
     IN1_REQUIRED,
-    INT32_NEEDS_UNPACK_TO_DEST,
     L1_ACC_FORMAT_SUPPORTED,
     LOFI_ONLY,
     MATMUL_DIMS,
@@ -89,7 +88,7 @@ from .unpacker.unpack_ab import UnpackerAB
 UNPACKER_MAP = {
     "UnpackerA": (
         lambda s: UnpackerA(),
-        [IN0_REQUIRED, INT32_NEEDS_UNPACK_TO_DEST, NO_TRANSPOSE_UNPACK_TO_DEST],
+        [IN0_REQUIRED, NO_TRANSPOSE_UNPACK_TO_DEST],
     ),
     "UnpackerAB": (
         lambda s: UnpackerAB(),

@@ -2,6 +2,8 @@
 # Separate L1 intermediates preserve each iteration for golden validation.
 # Each handoff carries one group: DEST values 0/1 and indices 2/3.
 # Final outputs have shape [128, 32], with each 32x32 tile still transposed.
+
+supported_archs: [wormhole, blackhole]
 dest_acc: false
 
 operands:
