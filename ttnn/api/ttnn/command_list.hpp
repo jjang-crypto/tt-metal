@@ -8,6 +8,7 @@
 
 #include <tt-metalium/experimental/command_list.hpp>
 
+#include "ttnn/command_list_params.hpp"
 #include "ttnn/common/guard.hpp"
 #include "ttnn/common/queue_id.hpp"
 
