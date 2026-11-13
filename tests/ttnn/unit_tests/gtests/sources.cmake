@@ -28,6 +28,8 @@ set(UNIT_TESTS_TTNN_BASIC_SOURCES
     test_generic_op.cpp
     test_generic_op_hashing.cpp
     test_per_device_program_merge.cpp
+    test_coalesce_coordinates.cpp
+    test_paged_fill_cache_mesh_programs.cpp
     test_graph_add.cpp
     test_graph_basic.cpp
     test_levelized_graph.cpp
