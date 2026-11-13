@@ -31,6 +31,7 @@ set(UNIT_TESTS_TTNN_BASIC_SOURCES
     test_coalesce_coordinates.cpp
     test_paged_fill_cache_mesh_programs.cpp
     test_spec_per_device_run_args.cpp
+    test_dropout_per_device.cpp
     test_graph_add.cpp
     test_graph_basic.cpp
     test_levelized_graph.cpp

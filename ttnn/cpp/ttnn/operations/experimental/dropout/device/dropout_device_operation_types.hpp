@@ -15,7 +15,8 @@ struct DropoutParams {
     const tt::tt_metal::MemoryConfig output_memory_config;
 
     // Specifies the seed for the dropout operation.
-    // If `use_per_device_seed` is true, the seed is offset by device ID across devices in a mesh.
+    // If `use_per_device_seed` is true, every device of a mesh also mixes in its own salt (from its fabric node id),
+    // so each device draws its own mask.
     uint32_t seed = 0;
     bool use_per_device_seed = false;
 
